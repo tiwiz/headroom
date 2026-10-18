@@ -121,9 +121,12 @@ Normal reset alerts use the quota windows' reset times.
 
 ### Gemini usage
 
-`GeminiQuotaFetcher` reads subscription and rate limits from `/v1/usage` on `cloudaicompanion.googleapis.com`, matching the Gemini Code Assist CLI request.
+`GeminiQuotaFetcher` makes the Gemini CLI's two quota calls on `cloudcode-pa.googleapis.com/v1internal`.
+`loadCodeAssist` names the account's Code Assist project and tier; the paid tier's name, or the current tier's, is the plan.
+`retrieveUserQuota` returns one bucket per model, and each becomes a window: used is one minus `remainingFraction`, and `resetTime` is the reset.
+The buckets carry no window length. An account without a Code Assist project reports `QuotaErrorKind.Access`.
 `GeminiOAuth` in `:core:auth` implements Google OAuth 2.0 PKCE with a loopback redirect to `http://localhost:<port>/oauth2callback`.
-Google issues access and refresh tokens. `daily` becomes a daily window and `session` a session window.
+Google issues access and refresh tokens.
 
 ## Expired sign-in
 
